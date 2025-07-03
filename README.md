@@ -1,97 +1,90 @@
 # 📌 MyPath2Tech Bot — Internal Dev README
 
-**This is our internal team doc for the MyPath2Tech Discord Economy Bot.**
-Core is live — here’s exactly what’s built, how it’s structured, and what’s left.
+**Internal dev documentation for the MyPath2Tech Discord Economy Bot.**
 
 ---
 
-## ✅ What’s done
+## ✅ Features
 
-* MongoDB connected (Atlas)
-* Base economy working:
+* `!balance` → check wallet/bank (embed + buttons)
+* `!bank` → view bank/wallet, Deposit/Withdraw/Daily/Profile buttons
+* `!deposit` / `!withdraw` → move funds
+* `!work` → earn coins, 1h cooldown, embed + buttons
+* `!daily` → daily coins, 24h cooldown, embed + buttons
+* `!send @user <amount>` → send coins
+* `!rob @user` → rob coins (respects shield)
+* `!leaderboard` → Top 5, buttons for Profile/Work/Daily
+* `!profile` → stats, cooldowns, shield status, buttons for Daily/Work/Shop
+* `!shield` → check shield status, Open Shop button
+* `!shop` → list shop items (Mongo)
+* `!buy <item>` → buy item, deduct coins, activate shield
+* `buttonHandler.js` → handles all GUI actions
 
-  * `!balance` — wallet coins
-  * `!bank` — wallet & bank, with GUI buttons (Deposit, Withdraw, Daily)
-  * `!deposit <amount>` / `!withdraw <amount>` — typed commands
-  * `!work` — earn coins (with cooldown)
-  * `!daily` — daily coins (typed + button)
-  * `!send @user <amount>` — send coins
-  * `!rob @user` — rob coins
-  * `!leaderboard` — top 5 richest
-* `buttonHandler.js` works for GUI logic
+**Admin:**
+
+* `!additem` → add shop item
+* `!give @user <amount>` → grant coins
+* `!clear` → clear messages
+* `!forcerob` → test auto rob
 
 ---
 
-## 📂 Project Structure
+## 📁 Structure
 
 ```
-mypath2tech-bot/
- ├─ index.js
- ├─ .env
- ├─ .gitignore
- ├─ package.json
- ├─ commands/
- │   ├─ balance.js
- │   ├─ work.js
- │   ├─ bank.js
- │   ├─ deposit.js
- │   ├─ withdraw.js
- │   ├─ send.js
- │   ├─ rob.js
- │   ├─ daily.js
- │   ├─ leaderboard.js
- │   ├─ (help.js) [TODO]
- │   ├─ (profile.js) [TODO]
- │   ├─ (shop.js) [TODO]
- │   ├─ (buy.js) [TODO]
- │   ├─ (shield.js) [TODO]
- ├─ handlers/
- │   ├─ buttonHandler.js
+/ (root)
+├── index.js
+├── .env
+├── .gitignore
+├── package.json
+├── commands/
+│   ├── balance.js, bank.js, deposit.js, withdraw.js, work.js, daily.js, send.js
+│   ├── rob.js, leaderboard.js, profile.js, shield.js, shop.js, buy.js
+│   ├── additem.js, give.js, forcerob.js, clear.js
+├── handlers/
+│   ├── buttonHandler.js
 ```
 
-**MongoDB user doc:**
+**User document:**
 
 ```json
 {
-  "userId": "123456789",
+  "userId": "123456",
   "coins": 500,
   "bank": 1000,
-  "lastDaily": 0
+  "lastDaily": 0,
+  "lastWork": 0,
+  "lastRob": 0,
+  "shieldUntil": 0
+}
+```
+
+**Shop item:**
+
+```json
+{
+  "name": "shield",
+  "price": 500,
+  "description": "Rob protection",
+  "durationHours": 6
 }
 ```
 
 ---
 
-## ⚙️ How it works
+## ⚙️ Usage
 
-* `index.js` dynamically loads `/commands`.
-* Each command runs Mongo checks + updates wallet/bank.
-* GUI buttons (in `!bank` embed) use `buttonHandler.js`.
-* Same wallet/bank logic works for both typed & button actions.
-
----
-
-## 🗂️ Dev TO DO
-* Test all edge cases for `!send` + `!rob`
-* Review DB writes for bugs
-* Add cooldowns for `!work` + `!rob` (store last used timestamp in Mongo)
-* Make `rob` respect shield
-* Build starter `!shop` — store items in Mongo, `!shop` lists them
-* Add `!shield` — user buys rob protection for coins, active for X hours
-* Build `!profile` command: show wallet, bank, last daily, cooldowns, shield status
----
-
-## 🚀 Running the bot
+Install:
 
 ```bash
 npm install
 ```
 
-Create `.env`:
+`.env`:
 
-```
-DISCORD_TOKEN=your-bot-token
-MONGO_URI=your-mongo-uri
+```env
+DISCORD_TOKEN=your-token
+MONGO_URI=your-mongo-url
 ```
 
 Run:
@@ -100,17 +93,42 @@ Run:
 node index.js
 ```
 
-Test in Discord:
-
-* Text: `!balance`, `!work`, `!bank`
-* Click GUI buttons in `!bank`
-
 ---
 
-## ✅ Team Reminder
+## ✅ Dev Tasks
 
-* Keep your commits clean.
-* Test fully before pushing.
-* Update this doc as new commands ship.
+### 1–5 Testing
 
-**Built by Matin + Dev Team**
+* Edge cases for `!send`
+* Limit `!rob` to wallet balance
+* Log button actions
+* Test shield expiry
+* Auto-create user on `!balance`
+
+### 6–10 Shop
+
+* Per-item Buy buttons
+* `!removeitem`
+* `!edititem`
+* Add 0-duration items (VIP)
+* Link VIP role on buy
+
+### 11–15 Economy
+
+* Add lifetime stats
+* Sort leaderboard by wallet/bank/total
+* Add `!tax`
+* Add `!gift`
+* Add bank interest
+
+### 16–20 Infra
+
+* `!stats` command
+* Bot logs channel
+* Spam rate limit
+* Unit tests
+* Deploy on Railway
+
+✅ **Keep code modular, commit tested code, update README.**
+
+**© Matin & Team — 2025 🚀**
