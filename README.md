@@ -13,7 +13,7 @@ Core is live — here’s exactly what’s built, how it’s structured, and wha
   * `!balance` — wallet coins
   * `!bank` — wallet & bank, with GUI buttons (Deposit, Withdraw, Daily)
   * `!deposit <amount>` / `!withdraw <amount>` — typed commands
-  * `!work` — earn coins
+  * `!work` — earn coins (with cooldown)
   * `!daily` — daily coins (typed + button)
   * `!send @user <amount>` — send coins
   * `!rob @user` — rob coins
