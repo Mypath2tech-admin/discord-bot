@@ -78,7 +78,7 @@ mypath2tech-bot/
 * Make `rob` respect shield
 * Build starter `!shop` — store items in Mongo, `!shop` lists them
 * Add `!shield` — user buys rob protection for coins, active for X hours
-
+* Build `!profile` command: show wallet, bank, last daily, cooldowns, shield status
 ---
 
 ## 🚀 Running the bot
