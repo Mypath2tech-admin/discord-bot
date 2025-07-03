@@ -71,22 +71,12 @@ mypath2tech-bot/
 
 ---
 
-## 🗂️ Dev TODO
-
-
-
-* Add `!help` command (list commands + descriptions)
+## 🗂️ Dev TO DO
 * Test all edge cases for `!send` + `!rob`
 * Review DB writes for bugs
-
-
 * Add cooldowns for `!work` + `!rob` (store last used timestamp in Mongo)
-* Build `!profile` command: show wallet, bank, last daily, cooldowns, shield status
 * Make `rob` respect shield
-
-
 * Build starter `!shop` — store items in Mongo, `!shop` lists them
-* Add `!buy <item>` — deduct coins, confirm purchase
 * Add `!shield` — user buys rob protection for coins, active for X hours
 
 ---
