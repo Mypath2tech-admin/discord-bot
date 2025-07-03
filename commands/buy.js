@@ -2,7 +2,7 @@ import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'disc
 
 export default {
   name: 'buy',
-  description: 'Buy an item from the shop',
+  description: 'Buy an item from the shop with GUI and role support',
   run: async ({ message, args, users }) => {
     const itemName = args[0]?.toLowerCase();
     if (!itemName) return message.reply("❌ Please specify an item to buy.");
@@ -48,7 +48,31 @@ export default {
       return message.reply({ embeds: [embed], components: [buttons] });
     }
 
-    // Generic item buy
+    // Check if the item name matches a server role
+    const role = message.guild.roles.cache.find(r => r.name.toLowerCase() === item.name.toLowerCase());
+    if (role) {
+      await users.updateOne(
+        { userId: message.author.id },
+        { $inc: { coins: -item.price } }
+      );
+      await message.member.roles.add(role);
+
+      const embed = new EmbedBuilder()
+        .setTitle(`✅ Purchase Successful`)
+        .setDescription(`You bought the **${item.name}** role for **${item.price} coins**.`)
+        .setColor(0x00AE86);
+
+      const buttons = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId('open_shop')
+          .setLabel('🛒 Open Shop')
+          .setStyle(ButtonStyle.Primary)
+      );
+
+      return message.reply({ embeds: [embed], components: [buttons] });
+    }
+
+    // Generic item buy fallback
     await users.updateOne(
       { userId: message.author.id },
       { $inc: { coins: -item.price } }

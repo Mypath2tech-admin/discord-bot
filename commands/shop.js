@@ -4,18 +4,18 @@ export default {
   name: 'shop',
   description: 'View all shop items',
   run: async ({ message, users }) => {
-    const db = users.s.db; // same DB from your users collection
+    const db = users.s.db; // same DB handle
     const items = await db.collection('shopItems').find().toArray();
 
-    if (items.length === 0) {
+    if (!items.length) {
       return message.reply('🛒 The shop is empty!');
     }
 
     const embed = new EmbedBuilder()
       .setTitle('🛍️ Shop Items')
       .setDescription(
-        items.map(item => 
-          `**${item.name}** — ${item.price} coins\n${item.description || ''}`
+        items.map(item =>
+          `**${item.name}** — ${item.price} coins\n${item.description || 'No description'}`
         ).join('\n\n')
       )
       .setColor(0x00AE86);
