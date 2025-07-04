@@ -97,14 +97,8 @@ node index.js
 
 ## ✅ Dev Tasks
 
-### 1–5 Testing
-
-* Edge cases for `!send`
-* Limit `!rob` to wallet balance
+### 3 Testing
 * Log button actions
-* Test shield expiry
-* Auto-create user on `!balance`
-
 ### 6–10 Shop
 
 * Per-item Buy buttons
