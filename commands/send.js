@@ -7,20 +7,34 @@ export default {
     const amount = parseInt(args[1]);
 
     if (!target || isNaN(amount) || amount <= 0) {
-      return message.reply('Usage: `!send @user <amount>`');
+      return message.reply('❌ Usage: `!send @user <amount>` (amount must be a positive number)');
     }
 
     if (target.id === message.author.id) {
-      return message.reply('❌ You can\'t send coins to yourself.');
+      return message.reply('❌ You can’t send coins to yourself.');
     }
 
-    if (userData.coins < amount) {
-      return message.reply('❌ You don\'t have enough coins.');
+    if (target.bot) {
+      return message.reply('🤖 You can’t send coins to a bot.');
+    }
+
+    if (!Number.isInteger(amount)) {
+      return message.reply('❌ Please enter a whole number amount.');
+    }
+
+    if ((userData.coins || 0) < amount) {
+      return message.reply('❌ You don’t have enough coins in your wallet.');
     }
 
     let targetData = await users.findOne({ userId: target.id });
     if (!targetData) {
-      await users.insertOne({ userId: target.id, coins: 0, bank: 0, lastDaily: 0 });
+      targetData = {
+        userId: target.id,
+        coins: 0,
+        bank: 0,
+        lastDaily: 0
+      };
+      await users.insertOne(targetData);
     }
 
     await users.updateOne({ userId: userData.userId }, { $inc: { coins: -amount } });
