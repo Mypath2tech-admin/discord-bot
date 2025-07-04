@@ -1,5 +1,4 @@
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
-
 export default {
   name: 'shield',
   run: async ({ message, userData }) => {
