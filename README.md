@@ -19,6 +19,7 @@
 * `!shop` → list shop items (Mongo)
 * `!buy <item>` → buy item, deduct coins, activate shield
 * `buttonHandler.js` → handles all GUI actions
+* !stats command
 * edit item
 * remove item
 * lifetime stats
@@ -114,7 +115,6 @@ node index.js
 
 ### 16–20 Infra
 
-* `!stats` command
 * Bot logs channel
 * Spam rate limit
 * Unit tests
