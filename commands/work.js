@@ -5,10 +5,9 @@ export default {
   description: 'Earn coins by working (1-hour cooldown)',
   run: async ({ message, users, userData }) => {
     const now = Date.now();
-    const cooldown = 60 * 60 * 1000; // 1 hour in ms
+    const cooldown = 60 * 60 * 1000; // 1 hour
 
     const remaining = cooldown - (now - (userData.lastWork || 0));
-
     const formatTime = (ms) => {
       const m = Math.floor(ms / (60 * 1000));
       const s = Math.floor((ms % (60 * 1000)) / 1000);
@@ -35,12 +34,15 @@ export default {
       return message.reply({ embeds: [embed], components: [buttons] });
     }
 
-    const earned = Math.floor(Math.random() * 100) + 50; // 50 to 149 coins
+    const earned = Math.floor(Math.random() * 100) + 50;
 
     await users.updateOne(
       { userId: userData.userId },
       {
-        $inc: { coins: earned },
+        $inc: {
+          coins: earned,
+          lifetimeEarned: earned
+        },
         $set: { lastWork: now }
       }
     );
