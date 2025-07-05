@@ -33,7 +33,13 @@ export default {
 
     await users.updateOne(
       { userId: userData.userId },
-      { $inc: { coins: reward }, $set: { lastDaily: now } }
+      {
+        $inc: {
+          coins: reward,
+          lifetimeEarned: reward
+        },
+        $set: { lastDaily: now }
+      }
     );
 
     const embed = new EmbedBuilder()
