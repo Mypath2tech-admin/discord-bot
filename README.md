@@ -102,8 +102,6 @@ node index.js
 ### 6–10 Shop
 
 * Per-item Buy buttons
-* `!removeitem`
-* `!edititem`
 * Add 0-duration items (VIP)
 * Link VIP role on buy
 
