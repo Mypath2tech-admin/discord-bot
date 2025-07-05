@@ -19,6 +19,13 @@
 * `!shop` → list shop items (Mongo)
 * `!buy <item>` → buy item, deduct coins, activate shield
 * `buttonHandler.js` → handles all GUI actions
+* edit item
+* remove item
+* lifetime stats
+* leaderboard sorted by lifetime earned
+* `!tax`
+* `!gift`
+* bank interest
 
 **Admin:**
 
@@ -104,14 +111,6 @@ node index.js
 * Per-item Buy buttons
 * Add 0-duration items (VIP)
 * Link VIP role on buy
-
-### 11–15 Economy
-
-* Add lifetime stats
-* Sort leaderboard by wallet/bank/total
-* Add `!tax`
-* Add `!gift`
-* Add bank interest
 
 ### 16–20 Infra
 
