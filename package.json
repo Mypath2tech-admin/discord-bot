@@ -11,10 +11,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dayjs": "^1.11.13",
     "discord.js": "^14.21.0",
     "dotenv": "^17.0.1",
     "mongodb": "^6.17.0",
     "nodemon": "^3.1.10",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "jest": "^30.0.4"
   }
 }

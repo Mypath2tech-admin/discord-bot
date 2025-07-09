@@ -88,6 +88,11 @@ Install:
 npm install
 ```
 
+
+```bash
+npm install dayjs
+```
+
 `.env`:
 
 ```env
@@ -115,7 +120,6 @@ node index.js
 
 ### 16–20 Infra
 
-* Bot logs channel
 * Spam rate limit
 * Unit tests
 * Deploy on Railway
