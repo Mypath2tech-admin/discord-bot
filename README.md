@@ -190,5 +190,4 @@ npm run test:coverage # Coverage reports
 
 ## 🚀 Credits
 
-### © Matin, Ola_Fabregas,
-Daniel, Muk — 2025
+### © Matin, Ola_Fabregas, Daniel, Muk — 2025
