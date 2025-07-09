@@ -4,7 +4,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:coverage": "nyc mocha",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +23,9 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
-    "jest": "^30.0.4"
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "nyc": "^15.1.0",
+    "sinon": "^17.0.1"
   }
 }

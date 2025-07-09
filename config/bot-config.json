@@ -1,0 +1,26 @@
+{
+  "economy": {
+    "dailyAmount": 100,
+    "workMinAmount": 50,
+    "workMaxAmount": 200,
+    "robSuccessRate": 0.6,
+    "bankInterestRate": 0.05,
+    "maxBankAmount": 50000
+  },
+  "moderation": {
+    "maxMessageLength": 2000,
+    "spamThreshold": 5,
+    "warningThreshold": 3
+  },
+  "features": {
+    "enableRobbing": true,
+    "enableShop": true,
+    "enableLeaderboard": true,
+    "enableBankInterest": false
+  },
+  "rateLimits": {
+    "globalMaxRequests": 20,
+    "globalWindowMs": 60000,
+    "blockDuration": 300000
+  }
+}

@@ -1,9 +1,25 @@
 import { logInfo, logWarn, logError } from "../utils/logger.js"; // Log: Import logger utils
+import { checkRateLimit } from "../utils/rateLimiter.js";
 
 export default async function ({ interaction, users }) {
   const userId = interaction.user.id;
 
   try {
+    // Check rate limits for button interactions
+    const rateLimitResult = checkRateLimit(
+      userId,
+      interaction.user.tag,
+      `button_${interaction.customId}`,
+      interaction.client
+    );
+
+    if (!rateLimitResult.allowed) {
+      await interaction.reply({
+        content: rateLimitResult.message,
+        ephemeral: true,
+      });
+      return;
+    }
     // Log: Wrap logic in try/catch for error logging
     let userData = await users.findOne({ userId });
     if (!userData) {

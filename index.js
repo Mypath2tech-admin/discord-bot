@@ -1,11 +1,19 @@
 import { Client, GatewayIntentBits, Partials, Events } from "discord.js";
 import { logInfo, logWarn, logError, clearOldLogs } from "./utils/logger.js";
+import { checkRateLimit } from "./utils/rateLimiter.js";
 import { createLogIndexes } from "./models/LoggerModel.js";
+import { loadConfig } from "./utils/config.js";
+import { trackUserActivity, detectSuspiciousActivity, validateTransaction } from "./utils/security.js";
+import { recordCommandExecution, startPeriodicHealthChecks } from "./utils/monitoring.js";
+import { processAllBankInterest } from "./utils/economy.js";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import fs from "fs";
 
 dotenv.config();
+
+// Load configuration
+loadConfig();
 
 // Check required environment variables
 if (!process.env.DISCORD_TOKEN) {
@@ -78,6 +86,14 @@ async function startBot() {
     // Create database indexes for optimal querying
     await createLogIndexes(logsCollection);
 
+    // Start periodic health checks
+    startPeriodicHealthChecks(client, 30);
+
+    // Start bank interest processing (every 24 hours)
+    setInterval(async () => {
+      await processAllBankInterest(users, client);
+    }, 24 * 60 * 60 * 1000);
+
     logInfo(client, "✅ MongoDB connected and verified successfully");
 
     // Log bot login attempt
@@ -127,7 +143,35 @@ client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
   if (!message.content.startsWith(PREFIX)) return;
 
+  const args = message.content.slice(PREFIX.length).trim().split(/ +/);
+  const commandName = args.shift().toLowerCase();
+
   try {
+    const startTime = Date.now();
+    
+    // Check rate limits before processing command
+    const rateLimitResult = checkRateLimit(
+      message.author.id,
+      message.author.tag,
+      commandName,
+      client
+    );
+
+    if (!rateLimitResult.allowed) {
+      // Record failed command attempt
+      recordCommandExecution(commandName, Date.now() - startTime, false);
+      
+      // Send rate limit message to user
+      await message.reply({
+        content: rateLimitResult.message,
+        allowedMentions: { repliedUser: false },
+      });
+      return;
+    }
+
+    // Track user activity for security monitoring
+    trackUserActivity(message.author.id, `command_${commandName}`, 0);
+
     logInfo(
       client,
       `Command used: ${message.content} by ${message.author.tag} in #${message.channel.name}`,
@@ -135,16 +179,9 @@ client.on(Events.MessageCreate, async (message) => {
         userId: message.author.id,
         channelId: message.channel.id,
         guildId: message.guild?.id,
-        commandName: message.content
-          .slice(PREFIX.length)
-          .trim()
-          .split(/ +/)[0]
-          .toLowerCase(),
+        commandName: commandName,
       }
     );
-
-    const args = message.content.slice(PREFIX.length).trim().split(/ +/);
-    const commandName = args.shift().toLowerCase();
 
     // Ensure user exists in database
     let userData = await users.findOne({ userId: message.author.id });
@@ -177,11 +214,29 @@ client.on(Events.MessageCreate, async (message) => {
     if (command) {
       try {
         await command.run({ message, users, userData, args, client });
+        
+        // Record successful command execution
+        const executionTime = Date.now() - startTime;
+        recordCommandExecution(commandName, executionTime, true);
+        
+        // Check for suspicious activity after command execution
+        const suspiciousResult = detectSuspiciousActivity(message.author.id, client);
+        if (suspiciousResult.suspicious) {
+          // Suspicious activity detected - already logged in detectSuspiciousActivity
+        }
       } catch (err) {
+        const executionTime = Date.now() - startTime;
+        recordCommandExecution(commandName, executionTime, false);
+        
         console.error(`❌ Error in command "${commandName}":`, err);
         logError(
           client,
-          `Error in command "${commandName}" by ${message.author.tag}: ${err.message}`
+          `Error in command "${commandName}" by ${message.author.tag}: ${err.message}`,
+          {
+            userId: message.author.id,
+            commandName,
+            errorStack: err.stack
+          }
         );
 
         // Send user-friendly error message
@@ -190,9 +245,16 @@ client.on(Events.MessageCreate, async (message) => {
         );
       }
     } else {
+      const executionTime = Date.now() - startTime;
+      recordCommandExecution(commandName, executionTime, false);
+      
       logWarn(
         client,
-        `Unknown command attempted: ${commandName} by ${message.author.tag}`
+        `Unknown command attempted: ${commandName} by ${message.author.tag}`,
+        {
+          userId: message.author.id,
+          commandName
+        }
       );
     }
   } catch (err) {
