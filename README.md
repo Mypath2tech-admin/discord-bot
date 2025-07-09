@@ -190,4 +190,4 @@ npm run test:coverage # Coverage reports
 
 ## 🚀 Credits
 
-**© Matin & Team — 2025**
+### © Matin & Team — 2025
