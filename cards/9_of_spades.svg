@@ -1,0 +1,7 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="400" height="600" rx="20" ry="20" fill="#fff" stroke="#000" stroke-width="8"/>
+  <!-- corner rank -->
+  <text x="20" y="60" font-size="60" font-family="sans-serif" fill="#000">9</text>
+  <!-- big suit symbol -->
+  <text x="200" y="360" font-size="200" text-anchor="middle" font-family="sans-serif" fill="#000">♠</text>
+</svg>

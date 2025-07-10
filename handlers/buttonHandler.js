@@ -1,8 +1,18 @@
 import { logInfo, logWarn, logError } from "../utils/logger.js"; // Log: Import logger utils
 import { checkRateLimit } from "../utils/rateLimiter.js";
-
+import bjCommand                      from "../commands/blackjack.js"
 export default async function ({ interaction, users }) {
   const userId = interaction.user.id;
+  // ——— BJ BUTTONS FIRST ———
+  try {
+    // If this interaction is a blackjack hit/stand, let bjCommand handle it
+    if (await bjCommand.buttonRun({ interaction, users })) {
+      return; // stop here, don’t fall back to the generic switch
+    }
+  } catch (err) {
+    // Log but continue to generic handling
+    logError(interaction.client, `Error in BJ buttonRun: ${err.message}`);
+  }
 
   try {
     // Check rate limits for button interactions

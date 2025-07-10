@@ -9,7 +9,7 @@ import { processAllBankInterest } from "./utils/economy.js";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import fs from "fs";
-
+import bjCommand from './commands/blackjack.js';
 dotenv.config();
 
 // Load configuration
@@ -113,7 +113,7 @@ async function startBot() {
         "❌ MongoDB connection failed. Please check your MONGO_URI in .env file."
       );
     }
-
+commands.set(bjCommand.name, bjCommand);
     // Attempt to log error if possible
     try {
       logError(client, `❌ Failed to start the bot: ${err.message}`);
@@ -137,6 +137,9 @@ client.once(Events.ClientReady, () => {
     `🤖 Bot started as ${client.user.tag} and is fully operational`
   );
 });
+
+
+
 
 // Command Handling
 client.on(Events.MessageCreate, async (message) => {
@@ -298,6 +301,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
   }
 });
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isButton()) return;
+
+  // first try BJ handler
+  if (await bjCommand.buttonRun({ interaction })) return;
+
+  // otherwise your generic buttonHandler...
+});
+
 
 // Global Error Logging
 process.on("unhandledRejection", (error) => {
@@ -314,6 +326,11 @@ process.on("uncaughtException", (error) => {
 
   // Graceful shutdown
   process.exit(1);
+});
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isButton()) return;
+  if (await bjCommand.buttonRun({ interaction })) return;
+  await buttonHandler({ interaction, users });
 });
 
 // Graceful shutdown
