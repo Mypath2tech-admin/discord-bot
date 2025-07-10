@@ -27,6 +27,10 @@ export default {
       new ButtonBuilder()
         .setCustomId('daily')
         .setLabel('🎁 Daily')
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId('show_logs')
+        .setLabel('📜 Log')
         .setStyle(ButtonStyle.Secondary)
     );
 

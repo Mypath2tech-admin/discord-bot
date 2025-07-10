@@ -112,6 +112,36 @@ export default async function ({ interaction, users }) {
           ephemeral: true,
         });
 
+      case "show_logs": {
+        // Example: Show the user's last 5 logs (customize as needed)
+        const logs = await global.logsCollection
+          ?.find({ userId })
+          .sort({ timestamp: -1 })
+          .limit(5)
+          .toArray();
+
+        if (!logs || logs.length === 0) {
+          return interaction.reply({
+            content: "No logs found for you.",
+            ephemeral: true,
+          });
+        }
+
+        const logText = logs
+          .map(
+            (log, i) =>
+              `**${i + 1}.** [${log.level.toUpperCase()}] ${log.message} (${new Date(
+                log.timestamp
+              ).toLocaleString()})`
+          )
+          .join("\n");
+
+        return interaction.reply({
+          content: `📜 **Your Recent Logs:**\n${logText}`,
+          ephemeral: true,
+        });
+      }
+
       default:
         // Log: Unknown button press
         logWarn(
